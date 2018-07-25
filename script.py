@@ -1,5 +1,12 @@
 import requests, bs4
 base_url = 'http://runescape.wikia.com/wiki/Special:Search?query='
+
+def get_immunity(soup, attr_name):
+    attr = soup.select(f'span[title$="{attr_name}."] > img')
+    if attr:
+        return attr[0].get('alt')
+    return 'Unknown'
+
 while True:
     query = input('Enter boss name: ')
     query_link = "+".join(query.split())
@@ -11,9 +18,9 @@ while True:
     boss_page = requests.get(boss_page_url)
     boss_soup = bs4.BeautifulSoup(boss_page.text, 'html5lib')
 
-    poison = boss_soup.select('span[title$="poison."] > img')[0].get('alt')
-    deflect = boss_soup.select('span[title$="deflect."] > img')[0].get('alt')
-    stun = boss_soup.select('span[title$="stun."] > img')[0].get('alt')
-    drain = boss_soup.select('span[title$="drain."] > img')[0].get('alt')
+    poison = get_immunity(boss_soup, 'poison')
+    deflect = get_immunity(boss_soup, 'deflect')
+    stun = get_immunity(boss_soup, 'stun')
+    drain = get_immunity(boss_soup, 'drain')
 
     print(f'Poison immune: {poison}\nDeflect immunte: {deflect}\nStun immune: {stun}\nDrain immune: {drain}')
